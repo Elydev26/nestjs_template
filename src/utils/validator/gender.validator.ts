@@ -1,5 +1,5 @@
 import * as Joi from 'joi';
-import { GenderTypeEnum } from 'src/admin/enums/admin.enum';
+import { GenderTypeEnum } from 'src/user/enums/user.enum';
 
 export const genderStatusValidator = Joi.string()
   .trim()

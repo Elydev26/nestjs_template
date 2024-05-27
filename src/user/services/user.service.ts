@@ -4,20 +4,20 @@ import { Model } from 'mongoose';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { EnvConfigEnum } from 'src/config/env.enum';
-import { AccountLoginDto, CreateAdminDto } from '../dtos/admin.dto';
-import { Admin, AdminDocument } from '../models/admin.model'
-import { hashPassword, verifyPassword } from 'src/general/function/password.function';
+import { AccountLoginDto, CreateAdminDto } from '../dtos/user.dto';
+import { hashPassword, verifyPassword } from 'src/utils/common/function/password.function';
 import { UserTokenDto } from 'src/token/dto/token.dto';
 import { TokenService } from 'src/token/service/token.service';
 import { AccountStatusEnum } from 'src/utils/enum/accountStatus.enum';
 import { RoleTypeEnum } from 'src/utils/enum/role.enum';
 import { BaseService } from 'src/utils/db/db.service';
+import { UserDocument, User } from '../models/user.model';
 
 @Injectable()
-export class AdminService extends BaseService<AdminDocument, ''> {
+export class UserService extends BaseService<UserDocument, ''> {
   constructor(
-    @InjectModel(Admin.name)
-    private adminModel: Model<AdminDocument>,
+    @InjectModel(User.name)
+    private adminModel: Model<UserDocument>,
     private readonly tokenService: TokenService,
     private readonly configService: ConfigService,
     private jwtService: JwtService,

@@ -5,44 +5,44 @@ import {
   NotFoundException,
   PipeTransform,
 } from '@nestjs/common';
-import { verifyPassword } from 'lib/utils/src/general/function/password.function';
 import {
   AccountForgetPasswordDto,
   AccountLoginDto,
   CreateAdminDto,
-} from '../dtos/admin.dto';
-import { RefreshTokenDto } from 'lib/utils/src/token/dto/refreshToken.dto';
-import { AdminService } from '../services/admin.service';
-import { FuturexWebsiteHttpCodesEnum } from 'lib/utils/src/token/enum/httpCodes.enum';
+} from '../dtos/user.dto';
+import { verifyPassword } from 'src/utils/common/function/password.function';
+import { RefreshTokenDto } from 'src/token/dto/refreshToken.dto';
+import { HttpCodesEnum } from 'src/token/enum/httpCodes.enum';
+import { UserService } from '../services/user.service';
 
 @Injectable()
 export class LoginAccountPipe implements PipeTransform {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(private readonly userService: UserService) {}
   async transform(value: AccountLoginDto) {
     /** the repositioning is to ensure that the account details is checked before OTP is.
     If the user enters incorrect details, they don't have to send a new OTP. since we expire an OTP once used. 
     */
-    const foundAccount = await this.adminService.findOneOrErrorOut(
+    const foundAccount = await this.userService.findOneOrErrorOut(
       {
         userName: value.userName,
       },
       null,
       new HttpException(
         {
-          status: FuturexWebsiteHttpCodesEnum.InvalidCredentials,
+          status: HttpCodesEnum.InvalidCredentials,
           message: 'Invalid Credentials',
         },
-        FuturexWebsiteHttpCodesEnum.InvalidCredentials,
+        HttpCodesEnum.InvalidCredentials,
       ),
     );
 
     if (!foundAccount) {
       throw new HttpException(
         {
-          status: FuturexWebsiteHttpCodesEnum.InvalidCredentials,
+          status: HttpCodesEnum.InvalidCredentials,
           message: 'Invalid Credentials',
         },
-        FuturexWebsiteHttpCodesEnum.InvalidCredentials,
+        HttpCodesEnum.InvalidCredentials,
       );
     }
 
@@ -53,10 +53,10 @@ export class LoginAccountPipe implements PipeTransform {
     if (!validPassword) {
       throw new HttpException(
         {
-          status: FuturexWebsiteHttpCodesEnum.InvalidCredentials,
+          status: HttpCodesEnum.InvalidCredentials,
           message: 'Invalid Credentials',
         },
-        FuturexWebsiteHttpCodesEnum.InvalidCredentials,
+        HttpCodesEnum.InvalidCredentials,
       );
     }
     return value;
@@ -65,11 +65,11 @@ export class LoginAccountPipe implements PipeTransform {
 
 @Injectable()
 export class AccountRefreshTokenPipe implements PipeTransform {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(private readonly userService: UserService) {}
   async transform(data: RefreshTokenDto) {
     const { refreshToken } = data;
 
-    const foundAccount = await this.adminService.findOne({ refreshToken });
+    const foundAccount = await this.userService.findOne({ refreshToken });
 
     if (!foundAccount)
       throw new NotFoundException('user not found with this refresh token');
@@ -80,11 +80,11 @@ export class AccountRefreshTokenPipe implements PipeTransform {
 
 @Injectable()
 export class ForgetPasswordPipe implements PipeTransform {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(private readonly userService: UserService) {}
   async transform(value: AccountForgetPasswordDto) {
     const { email } = value;
     const convertEmailToLowerCase = email.toLowerCase();
-    const accountExists = await this.adminService.propExists({
+    const accountExists = await this.userService.propExists({
       email: convertEmailToLowerCase,
     });
 
@@ -98,7 +98,7 @@ export class ForgetPasswordPipe implements PipeTransform {
 
 @Injectable()
 export class RegisterAccountPipe implements PipeTransform {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(private readonly userService: UserService) {}
 
   async transform(value: CreateAdminDto) {
     const { email, userName } = value;
@@ -108,7 +108,7 @@ export class RegisterAccountPipe implements PipeTransform {
       const lowercaseEmail = email.toLowerCase();
       value.email = lowercaseEmail;
 
-      const emailUsernameAlreadyTaken = await this.adminService.propExists({
+      const emailUsernameAlreadyTaken = await this.userService.propExists({
         email,
         userName,
       });

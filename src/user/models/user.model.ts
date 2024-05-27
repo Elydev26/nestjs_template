@@ -6,7 +6,7 @@ import { RoleTypeEnum } from 'src/utils/enum/role.enum';
 import { PhoneNumberSchema } from 'src/utils/schema/phoneNumber.schema';
 
 @Schema(dbSchemaOptions)
-export class Admin {
+export class User {
   id?: string;
 
   @Prop()
@@ -43,5 +43,5 @@ export class Admin {
   refreshToken: string;
 }
 
-export type AdminDocument = Admin & mongoose.Document;
-export const AdminModel = SchemaFactory.createForClass(Admin);
+export type UserDocument = User & mongoose.Document;
+export const UserModel = SchemaFactory.createForClass(User);
