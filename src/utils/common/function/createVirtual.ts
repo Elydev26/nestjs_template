@@ -1,4 +1,5 @@
-import { VirtualsDto } from '../../dto/virtuals.dto';
+import { VirtualsDto } from "src/utils/dto/virtuals.dto";
+
 
 export const createVirtual = (data: VirtualsDto) => {
   const { ref, schema, foreignField, populationName, localField, justOne } =

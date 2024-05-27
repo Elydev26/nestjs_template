@@ -6,12 +6,13 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { AccountLoginDto, CreateAdminDto } from '../dtos/admin.dto';
-import { AdminService } from '../services/admin.service';
+import { AccountLoginDto, CreateAdminDto } from '../dtos/user.dto';
+import { UserService } from '../services/user.service';
+import { verifyPassword } from 'src/utils/common/function/password.function';
 
 @Injectable()
 export class CreateAccountGuard implements CanActivate {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(private readonly userService: UserService) {}
 
   async canActivate(context: ExecutionContext) {
     try {
@@ -23,7 +24,7 @@ export class CreateAccountGuard implements CanActivate {
           'please enter at least one information about this account',
         );
       //check if organization exists
-      const emailExists = await this.adminService.findOne({
+      const emailExists = await this.userService.findOne({
         email: value.email,
       });
       if (emailExists) {
@@ -31,7 +32,7 @@ export class CreateAccountGuard implements CanActivate {
           'an existing account already has this email',
         );
       }
-      const userNameExists = await this.adminService.findOne({
+      const userNameExists = await this.userService.findOne({
         userName: value.userName,
       });
 
@@ -49,7 +50,7 @@ export class CreateAccountGuard implements CanActivate {
 
 @Injectable()
 export class LoginAccountGuard implements CanActivate {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(private readonly userService: UserService) {}
 
   async canActivate(context: ExecutionContext) {
     try {
@@ -59,7 +60,7 @@ export class LoginAccountGuard implements CanActivate {
       if (!value)
         throw new BadRequestException('please enter username and password');
       //check if admin exists
-      const userExists = await this.adminService.findOne({
+      const userExists = await this.userService.findOne({
         userName: value.userName,
       });
       const passwordExists = await verifyPassword(

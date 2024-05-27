@@ -1,7 +1,7 @@
 import { PickType } from '@nestjs/swagger';
-import { Admin } from '../models/admin.model';
+import { User } from '../models/user.model';
 
-export class CreateAdminDto extends PickType(Admin, [
+export class CreateAdminDto extends PickType(User, [
   'firstName',
   'lastName',
   'userName',
@@ -10,16 +10,16 @@ export class CreateAdminDto extends PickType(Admin, [
   'phoneNumber',
 ] as const) {}
 
-export class AccountLoginDto extends PickType(Admin, [
+export class AccountLoginDto extends PickType(User, [
   'userName',
   'password',
 ] as const) {}
 
-export class AccountForgetPasswordDto extends PickType(Admin, [
+export class AccountForgetPasswordDto extends PickType(User, [
   'email',
 ] as const) {}
 
-export class ResetPasswordDto extends PickType(Admin, [
+export class ResetPasswordDto extends PickType(User, [
   'password',
   'email',
 ] as const) {}

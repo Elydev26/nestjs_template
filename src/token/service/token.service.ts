@@ -8,8 +8,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 import { DeviceTokenDto, UserIdDto, UserTokenDto } from '../dto/token.dto';
-import { FuturexWebsiteHttpCodesEnum } from '../enum/httpCodes.enum';
-import { JwtService } from '@nestjs/jwt';
+import { HttpCodesEnum } from '../enum/httpCodes.enum';
 import { envConfiguration } from 'src/utils/env/config/env.config';
 
 @Injectable()
@@ -18,7 +17,6 @@ export class TokenService {
   private tokenSecret: string;
   private refreshTokenExpiration: string;
   private forgetPasswordExpiresIn: string;
-  private jwtService: JwtService;
 
   constructor(private config: ConfigService) {
     this.expiresIn = this.config.get(envConfiguration.TOKEN_EXPIRATION_TIME);
@@ -28,7 +26,7 @@ export class TokenService {
     );
     this.forgetPasswordExpiresIn = config.get(
       envConfiguration.RESET_PASSWORD_TOKEN_EXPIRATION_TIME,
-    );
+    );ConfigService
   }
 
   tokenize({
@@ -69,10 +67,10 @@ export class TokenService {
           if (err.name === 'TokenExpiredError') {
             throw new HttpException(
               {
-                status: FuturexWebsiteHttpCodesEnum.TokenExpiredError,
+                status: HttpCodesEnum.TokenExpiredError,
                 message: 'token expired',
               },
-              FuturexWebsiteHttpCodesEnum.TokenExpiredError,
+              HttpCodesEnum.TokenExpiredError,
             );
           }
           // TODO: log token error
@@ -137,10 +135,10 @@ export class TokenService {
           if (err.name === 'TokenExpiredError') {
             throw new HttpException(
               {
-                status: FuturexWebsiteHttpCodesEnum.RefreshTokenExpiredError,
+                status: HttpCodesEnum.RefreshTokenExpiredError,
                 message: 'refesh token expired',
               },
-              FuturexWebsiteHttpCodesEnum.RefreshTokenExpiredError,
+              HttpCodesEnum.RefreshTokenExpiredError,
             );
           }
           throw new BadRequestException(err.message);
@@ -158,10 +156,10 @@ export class TokenService {
           if (err.name === 'TokenExpiredError') {
             throw new HttpException(
               {
-                status: FuturexWebsiteHttpCodesEnum.TokenExpiredError,
+                status: HttpCodesEnum.TokenExpiredError,
                 message: 'token expired',
               },
-              FuturexWebsiteHttpCodesEnum.TokenExpiredError,
+              HttpCodesEnum.TokenExpiredError,
             );
           }
           throw new BadRequestException(err.message);
